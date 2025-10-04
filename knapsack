@@ -1,0 +1,26 @@
+def fractional_knapsack(weights, values, capacity):
+    n = len(weights)
+    # Calculate value/weight ratio
+    ratios = [(values[i] / weights[i], i) for i in range(n)]
+    # Sort items based on their value-to-weight ratio in descending order
+    ratios.sort(reverse=True, key=lambda x: x[0])
+
+    total_value = 0
+    for ratio, i in ratios:
+        if weights[i] <= capacity:
+            # Take the whole item
+            total_value += values[i]
+            capacity -= weights[i]
+        else:
+            # Take the fractional part of the item
+            total_value += values[i] * (capacity / weights[i])
+            break  # No more capacity left
+
+    return total_value
+
+# Example usage:
+weights = [10, 20, 30]
+values = [60, 100, 120]
+capacity = 50
+result = fractional_knapsack(weights, values, capacity)
+print(f"Maximum value in Knapsack = {result}")
