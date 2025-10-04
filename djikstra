@@ -1,0 +1,56 @@
+import heapq
+
+def dijkstra(graph, start):
+    # Priority queue to store the vertices to be processed
+    # The heap stores pairs of (distance, vertex)
+    pq = [(0, start)]  # (distance, node)
+    
+    # Dictionary to store the shortest path to each node
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    
+    # Dictionary to store the shortest path tree (previous node for each node)
+    previous_nodes = {node: None for node in graph}
+    
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+        
+        # If the current node's distance is already greater than the shortest known, skip it
+        if current_distance > distances[current_node]:
+            continue
+        
+        # Process each neighbor of the current node
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            
+            # If the calculated distance to the neighbor is shorter, update it
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous_nodes[neighbor] = current_node
+                heapq.heappush(pq, (distance, neighbor))
+    
+    return distances, previous_nodes
+
+def shortest_path(previous_nodes, start, goal):
+    path = []
+    current_node = goal
+    while current_node is not None:
+        path.append(current_node)
+        current_node = previous_nodes[current_node]
+    return path[::-1]  # Reverse the path to get the correct order
+
+# Example usage:
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1}
+}
+
+start_node = 'A'
+goal_node = 'D'
+
+distances, previous_nodes = dijkstra(graph, start_node)
+print(f"Shortest distances from {start_node}: {distances}")
+print(f"Shortest path from {start_node} to {goal_node}: {shortest_path(previous_nodes, start_node, goal_node)}")
